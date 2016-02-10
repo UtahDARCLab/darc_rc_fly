@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="roscopter" type="roscopter_node.py" name="Drone_Driver" args="--device=/dev/ttyACM0 --baudrate=115200 --enable-control=true" output="screen"/>
+  <node pkg="darc_custom_quad" type="control" name="Input_Mapping" output="screen"/>
+  <node pkg="darc_rc_fly" type="darc_rc_fly_node" name="RC_Input"/>
+</launch>
+
