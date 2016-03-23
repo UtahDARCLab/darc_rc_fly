@@ -30,18 +30,31 @@ int main(int argc, char* argv[]) {
   while (ros::ok()) {
     ros::spinOnce();
 
-    u.angular.x = 2.0 * (max_range - rx) / delta_range - 1.0;
-    u.angular.x = (u.angular.x < -1.0) ? -1.0 : ((u.angular.x > 1.0) ? 1.0 : u.angular.x);
+    float ax = 2.0 * (max_range - rx) / delta_range - 1.0;
+    ax = (ax < -1.0) ? -1.0 : ((ax > 1.0) ? 1.0 : ax);
 
-    u.angular.y = 2.0 * (ry - min_range) / delta_range - 1.0;
-    u.angular.y = (u.angular.y < -1.0) ? -1.0 : ((u.angular.y > 1.0) ? 1.0 : u.angular.y);
+    float ay = 2.0 * (ry - min_range) / delta_range - 1.0;
+    ay = (ay < -1.0) ? -1.0 : ((ay > 1.0) ? 1.0 : ay);
 
-    u.angular.z = 2.0 * (max_range - vw) / delta_range - 1.0;
-    u.angular.z = (u.angular.z < -1.0) ? -1.0 : ((u.angular.z > 1.0) ? 1.0 : u.angular.z);
+    float az = 2.0 * (max_range - vw) / delta_range - 1.0;
+    az = (az < -1.0) ? -1.0 : ((az > 1.0) ? 1.0 : az);
 
-    u.linear.z = 2.0 * (vz - min_range) / delta_range - 1.0;
-    u.linear.z = (u.linear.z < -1.0) ? -1.0 : ((u.linear.z > 1.0) ? 1.0 : u.linear.z);
+    float lz = 2.0 * (vz - min_range) / delta_range - 1.0;
+    lz = (lz < -1.0) ? -1.0 : ((lz > 1.0) ? 1.0 : lz);
 
+    static const float dead_zone = 0.35;
+    if (lz < dead_zone && lz > -dead_zone) {
+      lz = 0.0;
+    } else if (lz < 0.0) {
+      lz = (lz + dead_zone) / (1.0 - dead_zone);
+    } else {
+      lz = (lz - dead_zone) / (1.0 - dead_zone);
+    }
+    
+    u.angular.x = ax;
+    u.angular.y = ay;
+    u.angular.z = az;
+    u.linear.z  = lz;
     u_pub.publish(u);
 
     loop_rate.sleep();
