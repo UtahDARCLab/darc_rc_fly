@@ -24,13 +24,14 @@ int main(int argc, char* argv[]) {
   u_pub = node.advertise<geometry_msgs::Twist>("desired_u",1);
   geometry_msgs::Twist u;
 
-  float max_range = 1900.0, min_range = 1100.0;
-  float delta_range = max_range - min_range;
+  const float max_range = 1900.0, min_range = 1100.0;
+  const float delta_range = max_range - min_range;
+  const float dead_zone = 0.35;
 
   while (ros::ok()) {
     ros::spinOnce();
 
-    u.angular.x = 2.0 * (mu.angular.x_range - rx) / delta_range - 1.0;
+    u.angular.x = 2.0 * (max_range - rx) / delta_range - 1.0;
     u.angular.x = (u.angular.x < -1.0) ? -1.0 : ((u.angular.x > 1.0) ? 1.0 : u.angular.x);
 
     u.angular.y = 2.0 * (ry - min_range) / delta_range - 1.0;
@@ -42,7 +43,6 @@ int main(int argc, char* argv[]) {
     u.linear.z = 2.0 * (vz - min_range) / delta_range - 1.0;
     u.linear.z = (u.linear.z < -1.0) ? -1.0 : ((u.linear.z > 1.0) ? 1.0 : u.linear.z);
 
-    static const float dead_zone = 0.35;
     if (u.linear.z < dead_zone && u.linear.z > -dead_zone) {
       u.linear.z = 0.0;
     } else if (u.linear.z < 0.0) {
@@ -50,6 +50,8 @@ int main(int argc, char* argv[]) {
     } else {
       u.linear.z = (u.linear.z - dead_zone) / (1.0 - dead_zone);
     }
+
+    u_pub.publish(u);
     loop_rate.sleep();
   }
   return 0;
