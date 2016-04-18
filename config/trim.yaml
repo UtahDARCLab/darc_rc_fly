@@ -1,0 +1,4 @@
+roll_trim: 0.135
+pitch_trim: 0.025
+yaw_trim: -0.0375
+throttle_trim: 0.0
