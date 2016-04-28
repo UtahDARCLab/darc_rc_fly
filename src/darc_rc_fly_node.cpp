@@ -74,6 +74,7 @@ int main(int argc, char* argv[]) {
       u.linear.z -= throttle_trim;
       u.linear.z = (u.linear.z < -1.0) ? -1.0 : ((u.linear.z > 1.0) ? 1.0 : u.linear.z);
 
+/*
       if (u.linear.z < dead_zone && u.linear.z > -dead_zone) {
         u.linear.z = 0.0;
       } else if (u.linear.z < 0.0) {
@@ -81,6 +82,7 @@ int main(int argc, char* argv[]) {
       } else {
         u.linear.z = (u.linear.z - dead_zone) / (1.0 - dead_zone);
       }
+      */
     } else {
       u.angular.x = 0.0;
       u.angular.y = 0.0;
